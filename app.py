@@ -106,7 +106,7 @@ Ensure the summary is factual, neutral, and free from bias or personal opinions.
 Step 5: Format and Review
 Double-check for clarity, logical flow, and accuracy. Keep sections brief but ensure they include all critical points. Present the final summary in the format outlined above."""
                 
-             user_message = News_Article
+             user_message = st.text_area("Paste your news article here:", height=300)
              struct = [{'role' : 'system', 'content' : System_Prompt}]
              struct.append({"role": "user", "content": user_message})
              chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
