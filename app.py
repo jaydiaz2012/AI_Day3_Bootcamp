@@ -16,6 +16,8 @@ import streamlit as st
 import warnings
 from streamlit_option_menu import option_menu
 from streamlit_extras.mention import mention
+import requests
+from bs4 import BeautifulSoup
 
 warnings.filterwarnings("ignore")
 
@@ -69,22 +71,20 @@ elif options == "About Us" :
 elif options == "Model" :
     st.title("News Summarizer Tool")
     col1, col2, col3 = st.columns([1, 2, 1])
-
     with col2:
-        article_url = st.text_input("Enter News Article URL", placeholder="https://example.com/article/")
+        News_Article = st.text_input("Enter News Article URL", placeholder="https://example.com/article/")
         submit_button = st.button("Generate Summary")
         
-        if submit_button and article_url:
-            try:
-                with st.spinner("Fetching and processing the article..."):
-                    # Download and parse the article using newspaper3k
-                    article = Article(article_url)
-                    article.download()
-                    article.parse()
-                    user_message = article.text
+    if submit_button:
+        with st.spinner("Generating Summary"):
+             try:
+                 response = requests.get(News_Article)
+                 soup = BeautifulSoup(response.content, 'html.parser')
 
-                with st.spinner("Generating Summary..."):    
-                    System_Prompt = """You are an expert news summarizer, trained to create clear, concise, and informative summaries of news articles. Your goal is to present the most essential information in a structured, easy-to-digest format. Follow these steps:
+                 paragraphs = soup.find_all('p')
+                 article_text = ' '.join([p.get_text() for p in paragraphs])
+                 
+                 System_Prompt = """You are an expert news summarizer, trained to create clear, concise, and informative summaries of news articles. Your goal is to present the most essential information in a structured, easy-to-digest format. Follow these steps:
 
 Step 1: Analyze the Article
 Read Thoroughly: Understand the article’s overall context, main points, and supporting information.
@@ -115,12 +115,16 @@ Step 5: Format and Review
 Double-check for clarity, logical flow, and accuracy. Keep sections brief but ensure they include all critical points. Present the final summary in the format outlined above."""
 
                 # Set up the chat structure for OpenAI API
-                    user_message = article_url
-                    struct = [{'role': 'system', 'content': System_Prompt}]
-                    struct.append({"role": "user", "content": user_message})
-                    chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages=struct)
-                    response = chat.choices[0].message.content
-                    struct.append({"role": "assistant", "content": response})
-                    st.success("Insight generated successfully!")
-                    st.subheader("Summary : ")
-                    st.write(response)
+                 user_message = f"Please summarize the following news article: {article_text}"
+                 struct = [{'role': 'system', 'content': System_Prompt}]
+                 struct.append({"role": "user", "content": user_message})
+                 chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages=struct)
+                 summary = chat.choices[0].message.content
+                 struct.append({"role": "assistant", "content": summary})
+
+                 st.success("Summary generated successfully!")
+                 
+                 st.subheader("Article Summary:")
+                 st.write(summary)
+             except Exception as e:
+                 st.error(f"An error occurred: {str(e)}")
