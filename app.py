@@ -115,6 +115,7 @@ Step 5: Format and Review
 Double-check for clarity, logical flow, and accuracy. Keep sections brief but ensure they include all critical points. Present the final summary in the format outlined above."""
 
                 # Set up the chat structure for OpenAI API
+                user_message = article_url
                 struct = [{'role': 'system', 'content': System_Prompt}]
                 struct.append({"role": "user", "content": user_message})
                 
@@ -126,11 +127,6 @@ Double-check for clarity, logical flow, and accuracy. Keep sections brief but en
                 # Extract the summary from the response
                 response = chat.choices[0].message.content
                 struct.append({"role": "assistant", "content": response})
-
-                # Display the extracted article content
-                st.write("**Extracted Article Text:**")
-                st.write(user_message)
-
-                # Display the generated summary
-                st.write("**Generated Summary:**")
+                st.success("Great Job!")
+                st.subheader("Summary : ")
                 st.write(response)
