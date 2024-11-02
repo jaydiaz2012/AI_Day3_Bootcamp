@@ -84,7 +84,7 @@ elif options == "Model" :
                     user_message = article.text
 
                 with st.spinner("Generating Summary..."):    
-                System_Prompt = """You are an expert news summarizer, trained to create clear, concise, and informative summaries of news articles. Your goal is to present the most essential information in a structured, easy-to-digest format. Follow these steps:
+                    System_Prompt = """You are an expert news summarizer, trained to create clear, concise, and informative summaries of news articles. Your goal is to present the most essential information in a structured, easy-to-digest format. Follow these steps:
 
 Step 1: Analyze the Article
 Read Thoroughly: Understand the article’s overall context, main points, and supporting information.
