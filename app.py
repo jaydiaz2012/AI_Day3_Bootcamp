@@ -62,8 +62,8 @@ if options == "Home" :
    
 elif options == "About Us" :
     st.image("images/jay.jpg")
-     st.title("About Me")
-     st.write("Hi, I'm Jay. I am aspiring to be an AI Engineer.")
+    st.title("About Me")
+    st.write("Hi, I'm Jay. I am aspiring to be an AI Engineer.")
 
 # Options : Model
 elif options == "Model" :
