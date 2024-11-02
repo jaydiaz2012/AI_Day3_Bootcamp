@@ -61,7 +61,7 @@ if options == "Home" :
     st.write("State any news from a credible website and the 'model' tool below will summarize it to avoid wasting time")
    
 elif options == "About Us" :
-    st.image("images/jay.jpg")
+    #st.image("images/jay.jpg")
     st.title("About Me")
     st.write("Hi, I'm Jay. I am aspiring to be an AI Engineer.")
 
