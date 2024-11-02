@@ -71,11 +71,19 @@ elif options == "Model" :
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        News_Article = st.text_input("News Article", placeholder="News : ")
+        article_url = st.text_input("Enter News Article URL", placeholder="https://example.com/article/")
         submit_button = st.button("Generate Summary")
+        
+        if submit_button and article_url:
+            try:
+                with st.spinner("Fetching and processing the article..."):
+                    # Download and parse the article using newspaper3k
+                    article = Article(article_url)
+                    article.download()
+                    article.parse()
+                    user_message = article.text
 
-        if submit_button:
-            with st.spinner("Generating Summary"):
+                with st.spinner("Generating Summary..."):    
                 System_Prompt = """You are an expert news summarizer, trained to create clear, concise, and informative summaries of news articles. Your goal is to present the most essential information in a structured, easy-to-digest format. Follow these steps:
 
 Step 1: Analyze the Article
@@ -105,13 +113,24 @@ Ensure the summary is factual, neutral, and free from bias or personal opinions.
 
 Step 5: Format and Review
 Double-check for clarity, logical flow, and accuracy. Keep sections brief but ensure they include all critical points. Present the final summary in the format outlined above."""
-                
-                user_message = st.text_area("Paste your news article here:", height=300)
-                struct = [{'role' : 'system', 'content' : System_Prompt}]
+
+                # Set up the chat structure for OpenAI API
+                struct = [{'role': 'system', 'content': System_Prompt}]
                 struct.append({"role": "user", "content": user_message})
-                chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+                
+                # Call OpenAI ChatCompletion
+                chat = openai.ChatCompletion.create(
+                    model="gpt-4o-mini", messages=struct
+                )
+                
+                # Extract the summary from the response
                 response = chat.choices[0].message.content
                 struct.append({"role": "assistant", "content": response})
-                st.success("Insight generated successfully!")
-                st.subheader("Summary : ")
+
+                # Display the extracted article content
+                st.write("**Extracted Article Text:**")
+                st.write(user_message)
+
+                # Display the generated summary
+                st.write("**Generated Summary:**")
                 st.write(response)
